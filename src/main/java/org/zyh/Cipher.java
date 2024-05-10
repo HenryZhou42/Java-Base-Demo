@@ -18,6 +18,9 @@ public class Cipher {
             if (Character.isLetter(ch)) {
                 char base = Character.isUpperCase(ch) ? 'A' : 'a';
                 ch = (char) (((ch - base + shift) % 26) + base);
+            }else if (Character.isDigit(ch)) { // 新增：处理数字
+                int digitShift = (ch - '0' + shift) % 10;
+                ch = (char) (digitShift + '0');
             }
             cipherText.append(ch);
         }
@@ -26,7 +29,18 @@ public class Cipher {
 
     // 解密方法，实质上是调用加密方法并使用26减去位移量作为新位移量
     public static String decrypt(String cipherText, int shift) {
-        return encrypt(cipherText, 26 - (shift % 26));
+        StringBuilder plainText = new StringBuilder();
+        for (char ch : cipherText.toCharArray()) {
+            if (Character.isLetter(ch)) {
+                char base = Character.isUpperCase(ch) ? 'A' : 'a';
+                ch = (char) (((ch - base - shift + 26) % 26) + base);
+            } else if (Character.isDigit(ch)) {
+                int digitShift = ((ch - '0' - shift + 10) % 10); // 数字解密逻辑，调整确保结果为正
+                ch = (char) (digitShift + '0');
+            }
+            plainText.append(ch);
+        }
+        return plainText.toString();
     }
 
     public static void main(String[] args) {
